@@ -1,0 +1,44 @@
+<html>
+<head>
+<SCRIPT LANGUAGE="JavaScript" SRC="javascript.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="data.js"></SCRIPT>
+<script type="text/javascript">
+var cellsize = CELLSIZE;
+var matrixHeight = HEIGHT;
+var matrixWidth = WIDTH;
+</SCRIPT>
+<style type="text/css">
+div#container {
+    position:relative;
+    cursor:crosshair;
+    /*border: 1px solid black;
+    width: auto;
+*/
+}
+div.blue {
+    position:absolute;
+    float:left;
+    background-color:#0000FF;
+    height:CELLSIZEpx;
+    width:CELLSIZEpx;
+    cursor: crosshair;
+}
+div.white {
+    float:left;
+    background-color:#FFFFFF;
+    height:CELLSIZEpx;
+    width:CELLSIZEpx;
+    cursor: crosshair;
+}
+div.line {
+    clear:both;
+}
+</style>
+
+</head>
+<body onload="load()">
+<div id="value" style="padding:10px;">&nbsp;</div>
+<div id="container">
+</div>
+</body>
+</html>
