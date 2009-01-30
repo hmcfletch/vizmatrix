@@ -7,3 +7,9 @@ There are some things in the VizMatrixHTMLGen.rb that are configureable:
 x,y => size of the matrix
 threshold => fraction of entries that are nonzero
 cellsize => size of the individual cells, in pixels
+
+TODO
+
+* Textarea that accepts an smat file and converts it to the requireed json
+* Process label files
+
