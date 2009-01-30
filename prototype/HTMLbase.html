@@ -8,12 +8,30 @@ var matrixHeight = HEIGHT;
 var matrixWidth = WIDTH;
 </SCRIPT>
 <style type="text/css">
-div#container {
+div#outer_container {
     position:relative;
-    cursor:crosshair;
-    /*border: 1px solid black;
-    width: auto;
-*/
+/*    cursor: pointer;*/
+    overflow: hidden;
+    border: 1px solid black;
+    height: 300px;
+    width: 300px;
+}
+div#inner_container {
+    position:relative;
+    cursor:none;
+/*    cursor:crosshair;*/
+    border: 1px solid #CCCCCC;
+}
+div#horDiv {
+    position:absolute;
+    background-color:#FF0000;
+    height:1px;    
+}
+div#vertDiv {
+    position:absolute;
+    background-color:#FF0000;
+    width:1px;    
+    top:0;
 }
 div.blue {
     position:absolute;
@@ -21,7 +39,6 @@ div.blue {
     background-color:#0000FF;
     height:CELLSIZEpx;
     width:CELLSIZEpx;
-    cursor: crosshair;
 }
 div.white {
     float:left;
@@ -37,8 +54,10 @@ div.line {
 
 </head>
 <body onload="load()">
-<div id="value" style="padding:10px;">&nbsp;</div>
-<div id="container">
-</div>
+    <div id="value" style="padding:10px;">&nbsp;</div>
+    <div id="test" style="padding:10px;">&nbsp;</div>
+    <div id="outer_container">
+        <div id="inner_container"></div>
+    </div>
 </body>
 </html>

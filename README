@@ -1,0 +1,9 @@
+To generate a random file use the following command:
+
+>> ruby VizMatrixHTMLGen.rb > vizmatrix.html
+
+There are some things in the VizMatrixHTMLGen.rb that are configureable:
+
+x,y => size of the matrix
+threshold => fraction of entries that are nonzero
+cellsize => size of the individual cells, in pixels

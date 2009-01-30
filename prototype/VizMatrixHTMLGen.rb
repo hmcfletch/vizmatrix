@@ -1,16 +1,17 @@
-filename = "orig.html"
+filename = "HTMLbase.html"
+jsdatafile = "data.js"
 
-table = ""
-
-x = 800
-y = 600
-
+# BEGIN CONFIGURATION VARIABLES #
+x = 200
+y = 200
 cellsize = 1
-
-threshold = 0.1
+threshold = 0.01
+# END CONFIGUREATION VARIABLES #
 
 file = File.new(filename,"r")
 html = ""
+data = []
+
 while (line = file.gets):
     html += line
 end
@@ -20,24 +21,28 @@ j = 0
 
 while ( i < x ):
     j = 0
-    table << "  <div class=\"line\">"
     while ( j < y ):
-        style = "white"
-        value = 0
         if (rand(0) < threshold ):
-            style = "blue"
             value = rand(1000);
+            data << { 'i' => i, 'j' => j, 'val' => value }
         end
-        
-        table << ('<div class="' + style + "\" value=\"" + value.to_s + "\" i=\"" + i.to_s + "\" j=\"" + j.to_s + "\">&nbsp;</div>")
         j += 1
     end
-    table << "</div>"
     i += 1
 end
 
-html.sub!(/TABLE DATA/) { table }
+data2 = []
+for nz in data
+    data2 << "{ \"i\":#{nz['i']},\"j\":#{nz['j']},\"val\":#{nz['val']}}"
+end
+
+data_str = "var data = { \"data\":[" + data2.join(",") + "] }"
+
+data_fh = File.new(jsdatafile,"w")
+data_fh.puts data_str
 
 html.gsub!(/CELLSIZE/) { cellsize }
+html.gsub!(/HEIGHT/) { y }
+html.gsub!(/WIDTH/) { x }
 
 puts html
