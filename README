@@ -12,4 +12,5 @@ TODO
 
 * Textarea that accepts an smat file and converts it to the requireed json
 * Process label files
-
+* Consider moving all code in moveCrosshairs to native JS instead of jQuery to
+  cut down on overhead since this function is called all the time
