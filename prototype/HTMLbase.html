@@ -1,5 +1,7 @@
 <html>
 <head>
+<SCRIPT LANGUAGE="JavaScript" SRC="jquery.js"></SCRIPT>
+<SCRIPT LANGUAGE="JavaScript" SRC="jquery.ui.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" SRC="javascript.js"></SCRIPT>
 <SCRIPT LANGUAGE="JavaScript" SRC="data.js"></SCRIPT>
 <script type="text/javascript">
@@ -8,6 +10,9 @@ var matrixHeight = HEIGHT;
 var matrixWidth = WIDTH;
 </SCRIPT>
 <style type="text/css">
+div#debug {
+    display: block;
+}
 div#outer_container {
     position:relative;
 /*    cursor: pointer;*/
@@ -55,9 +60,11 @@ div.line {
 </head>
 <body onload="load()">
     <div id="value" style="padding:10px;">&nbsp;</div>
-    <div id="test" style="padding:10px;">&nbsp;</div>
+    <div id="debug" style="padding:10px;">&nbsp;</div>
     <div id="outer_container">
-        <div id="inner_container"></div>
+        <div id="inner_container">
+            <canvas id='canvas' height="HEIGHT" width="WIDTH"></canvas>
+        </div>
     </div>
 </body>
 </html>

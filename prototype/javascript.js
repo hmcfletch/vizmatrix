@@ -1,103 +1,123 @@
-var validDivs = new Object();
-validDivs['blue'] = true;
-validDivs['white'] = true;
-
-var outW;
-var outH;
-var outTop;
-var outLeft;
-
-var horDivProps = {
-    style: ""
+var outerProps = {
+    width:null,
+    height:null,
+    top:null,
+    left:null
 };
-var vertDivProps = {
-    style: ""
+
+var innerProps = {
+    left:0,
+    top:0
 };
 
 function load() {
-    var outerContainer = document.getElementById('outer_container');
-    outW = outerContainer.clientWidth;
-    outH = outerContainer.clientHeight;
-    [outLeft,outTop] = getPos(outerContainer);
+    var outerContainer = $('#outer_container');
+    outerProps.width = outerContainer.width();
+    outerProps.height = outerContainer.height();
 
-    var container = document.getElementById('inner_container');
-    // add the drag event
-    container.addEventListener('click',clickDrag,false);
-    container.addEventListener('mouseover',initCrosshairs,false);
-    container.addEventListener('mouseout',removeCrosshairs,false);
-    var containerStyle = "height:" + matrixHeight * cellsize + ";width:" + matrixWidth * cellsize+";";
-    container.setAttribute('style',containerStyle);
-    for ( var k=0; k<data.data.length; k++ ) {
-        var newDiv = document.createElement('div');
-        newDiv.setAttribute('class','blue');
-        newDiv.setAttribute('i', data.data[k].i);
-        newDiv.setAttribute('j', data.data[k].j);
-        newDiv.setAttribute('value', data.data[k].val);
-        newDiv.addEventListener('mouseover', displayValue, false);
-        var topPos = data.data[k].j * cellsize;
-        var leftPos = data.data[k].i * cellsize;
-        var style = "top:" + topPos + ";left:" + leftPos + ";";
-        newDiv.setAttribute('style',style);
-        container.appendChild(newDiv);
-    }
-    var divs = document.getElementsByTagName("div");
-    for (var i=0, j=divs.length; i<j; i++ ) {
-        var classname = divs[i].getAttribute("class");
-        if ( validDivs[divs[i].getAttribute("class")] ) {
-            divs[i].addEventListener('mouseover', displayValue, false);
+    var outerOffset = outerContainer.offset();
+    outerProps.top = outerOffset.top;
+    outerProps.left = outerOffset.left;
+    
+    var container = $('#inner_container');
+
+    var innerOffset = container.offset();
+    innerProps.left = innerOffset.left;
+    innerProps.top = innerOffset.top;
+
+    initCrosshairs();
+    container.bind("mouseover",showCrosshairs);
+    container.bind("mouseout",hideCrosshairs);
+    container.height(matrixHeight*cellsize);
+    container.width(matrixWidth*cellsize);
+    
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    
+    ctx.fillStyle = "rgb(0,0,255)";
+    for ( var i in data2 ) {
+        for ( var j in data2[i] ) {
+            //var newDiv = $('<div>');
+            //newDiv.addClass('blue');
+
+            var topPos = j * cellsize;
+            var leftPos = i * cellsize;
+            //newDiv.css({ "top" : topPos, "left" : leftPos });
+            //container.append(newDiv);
+
+            // draw rect on canvas
+            ctx.fillRect(leftPos,topPos,cellsize,cellsize);
         }
     }
+    $("#inner_container").draggable({
+        opacity: "0.6",
+        drag: moveMatrix,
+        distance: 5,
+    });
 }
 
 function displayValue(event) {
-    var valueDiv = document.getElementById("value");
+    var valueDiv = $("#value");
     var str = "i = " + this.getAttribute("i") + ", j = " + this.getAttribute("j") + " => " + this.getAttribute("value");
-    valueDiv.innerHTML = str;
+    valueDiv.html(str);
 }
 
-function clickDrag(event) {
-    
+function moveMatrix(event, ui) {
+    innerProps.left = parseInt(ui.position.left);
+    innerProps.top = parseInt(ui.position.top);
 }
 
-function initCrosshairs(event) {
-    var target = event.target;
-    var horDiv = document.createElement('div');
-    horDiv.setAttribute("id","horDiv");
-    var width = outW;
-    horDiv.setAttribute("style","width:" + width +"px;");
-    horDivProps.style = horDiv.getAttribute("style");
-    var vertDiv = document.createElement('div');
-    vertDiv.setAttribute("id","vertDiv");
-    var height = outH;
-    vertDiv.setAttribute("style","height:" + height +"px;");
-    vertDivProps.style = vertDiv.getAttribute("style");
-    var outer = document.getElementById('outer_container');
-    outer.appendChild(horDiv)
-    outer.appendChild(vertDiv);
-    target.onmousemove = moveCrosshair;
+function initCrosshairs() {
+    var target = $('#inner_container');
+    var horDiv = $('<div>');
+    horDiv.attr("id","horDiv");
+    horDiv.width(outerProps.width);
+    var vertDiv = $('<div>');
+    vertDiv.attr("id","vertDiv");
+    vertDiv.height(outerProps.height);
+    var outer = $('#outer_container');
+    horDiv.hide();
+    vertDiv.hide();
+    outer.append(horDiv)
+    outer.append(vertDiv);
 }
 
 function moveCrosshair(event) {
     var cursor = getCursorPosition(event);
-    var testDiv = document.getElementById('test');
-    var x = cursor.x - outLeft;
-    var y = cursor.y - outTop;
-    testDiv.innerHTML = "x: " + x + ", y: " + y;
+    var innerOffset = $("#inner_container").offset();
+    var i = parseInt(cursor.x - outerProps.left - innerOffset.left - 2);
+    var j = parseInt(cursor.y - outerProps.top - innerOffset.top - 2);
+    var a = innerOffset.left - innerProps.left;
+    var b = innerOffset.top - innerProps.top;
+    $("#debug").html(innerOffset.left + " * " + innerProps.left + " * " + cursor.x + " * " + innerOffset.top + " * " + innerProps.top + " * " + cursor.y);
+    //$("#debug").html(a + " - " + b);
+    var x = parseInt(cursor.x - outerProps.left - 2);
+    var y = parseInt(cursor.y - outerProps.top - 2);
+    if ( ! x || !y ) {
+        return;
+    }
+    var val = 0;
+    if ( data2[i]&& data2[i][j] ) {
+        val = data2[i][j];
+    }
     // move crosshair divs
-    var horDiv = document.getElementById('horDiv');
-    var vertDiv = document.getElementById('vertDiv');
-    horDiv.setAttribute("style",horDivProps.style + "top:" + y + ";");
-    vertDiv.setAttribute("style",vertDivProps.style + "left:" + x + ";");
+    var horDiv = $('#horDiv');
+    var vertDiv = $('#vertDiv');
+    horDiv.css( { "top" : y } );
+    vertDiv.css( { "left" : x } );
+    $("#value").html("x: " + i + ",y: " + j + " => " + val);
 }
 
-function removeCrosshairs(event) {
-    var target = event.target;
-    target.mousemove = null;
-    var outer = document.getElementById('outer_container');
-    var horDiv = document.getElementById('horDiv');
-    var vertDiv = document.getElementById('vertDiv');
-    outer.removeChild(horDiv);
-    outer.removeChild(vertDiv);
+function showCrosshairs(event) {
+    $("#inner_container").mousemove(moveCrosshair);
+    $("#horDiv").show();
+    $("#vertDiv").show();
+}
+
+function hideCrosshairs(event) {
+    $("#horDiv").hide();
+    $("#vertDiv").hide();
+    $("#inner_container").mousemove(null);
 }
 
 function getPos(obj) {
